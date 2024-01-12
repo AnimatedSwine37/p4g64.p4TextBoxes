@@ -10,6 +10,16 @@ public class Config : Configurable<Config>
     [DefaultValue(false)]
     public bool ShowYellowStripe { get; set; } = false;
 
+    [DisplayName("Text X Position")]
+    [Description("The horizontal position that the message text starts at.")]
+    [DefaultValue(72)]
+    public float TextXPos { get; set; } = 72;
+
+    [DisplayName("Text Y Position")]
+    [Description("The horizontal position that the message text starts at.")]
+    [DefaultValue(418)]
+    public float TexYXPos { get; set; } = 418;
+
     [DisplayName("Main Box Configuration")]
     [Description("Configure the main brown message window.")]
     public MainBoxConfig MainBox { get; set; } = new();

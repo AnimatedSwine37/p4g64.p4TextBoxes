@@ -1,10 +1,7 @@
 ﻿using p4g64.p4TextBoxes.Template;
 using Reloaded.Hooks.Definitions;
 using Reloaded.Hooks.Definitions.Enums;
-using Reloaded.Hooks.Definitions.X64;
-using Reloaded.Hooks.ReloadedII.Interfaces;
 using Reloaded.Mod.Interfaces;
-using System.IO;
 using System.Runtime.InteropServices;
 using static p4g64.p4TextBoxes.Colour;
 using IReloadedHooks = Reloaded.Hooks.ReloadedII.Interfaces.IReloadedHooks;
@@ -52,6 +49,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
     private IAsmHook _closingOrangeOutlineHook;
     private IAsmHook _openingMainBoxHook;
     private IAsmHook _closingMainBoxHook;
+    private IAsmHook _textPositionHook;
 
     private IHook<Action> _renderMessageBoxHook;
     private IHook<Action> _renderBackgroundHook;
@@ -62,6 +60,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
     private RectangleOverride* _orangeStripeOverride;
     private RectangleOverride* _mainBoxOverride;
+    private float* _textX;
+    private float* _textY;
 
     public Mod(ModContext context)
     {
@@ -76,7 +76,9 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
         _orangeStripeOverride = (RectangleOverride*)NativeMemory.Alloc((nuint)sizeof(RectangleOverride));
         _mainBoxOverride = (RectangleOverride*)NativeMemory.Alloc((nuint)sizeof(RectangleOverride));
-        SetupOverrideStructs();
+        _textX = (float*)NativeMemory.Alloc(sizeof(float));
+        _textY = (float*)NativeMemory.Alloc(sizeof(float));
+        SetupOverrides();
 
         Utils.SigScan("89 5C 24 ?? E8 ?? ?? ?? ?? F3 0F 10 05 ?? ?? ?? ?? 44 8B CD", "Opening Yellow Outline", address =>
         {
@@ -103,20 +105,20 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         });
 
         string[] transitionOrangeFunc =
-{
-                "use64",
-                // Change the paramaters to what we want
-                $"mov r9d, dword [qword {(nuint)(&_orangeStripeOverride->GradientMain)}]",
-                $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->GradientSub)}]",
-                $"mov [rsp + 0x20], ecx",
-                $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->Length)}]",
-                $"mov [rsp + 0x28], ecx",
-                $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->Height)}]",
-                $"mov [rsp + 0x30], ecx",
-                $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->GradientType)}]",
-                $"mov [rsp + 0x70], ecx",
-                $"mov ecx, [qword {(nuint)(&_orangeStripeOverride->XPos)}]"
-            };
+        {
+            "use64",
+            // Change the paramaters to what we want
+            $"mov r9d, dword [qword {(nuint)(&_orangeStripeOverride->GradientMain)}]",
+            $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->GradientSub)}]",
+            $"mov [rsp + 0x20], ecx",
+            $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->Length)}]",
+            $"mov [rsp + 0x28], ecx",
+            $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->Height)}]",
+            $"mov [rsp + 0x30], ecx",
+            $"mov ecx, dword [qword {(nuint)(&_orangeStripeOverride->GradientType)}]",
+            $"mov [rsp + 0x70], ecx",
+            $"mov ecx, [qword {(nuint)(&_orangeStripeOverride->XPos)}]"
+        };
 
         Utils.SigScan("41 8D 4E ?? 89 44 24 ?? E8 ?? ?? ?? ??", "Opening Orange Stripe", address =>
         {
@@ -144,6 +146,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
             $"mov ecx, [qword {(nuint)(&_mainBoxOverride->XPos)}]"
         };
 
+
         Utils.SigScan("F3 0F 2C D1 89 44 24 ??", "Opening Main Box", address =>
         {
             _openingMainBoxHook = _hooks.CreateAsmHook(transitionMainFunc, address, AsmHookBehaviour.ExecuteAfter).Activate();
@@ -153,6 +156,18 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         {
             _closingMainBoxHook = _hooks.CreateAsmHook(transitionMainFunc, address, AsmHookBehaviour.ExecuteAfter).Activate();
         });
+
+        Utils.SigScan("E8 ?? ?? ?? ?? 33 D2 48 8B CB E8 ?? ?? ?? ?? 41 B8 00 FF FF FF", "Message Position", address =>
+        {
+            string[] function =
+            {
+                "use64",
+                $"movss xmm1, [qword {(nuint)_textX}]",
+                $"movss xmm2, [qword {(nuint)_textY}]",
+            };
+            _textPositionHook = _hooks.CreateAsmHook(function, address, AsmHookBehaviour.ExecuteFirst).Activate();
+        });
+
 
         Utils.SigScan("48 89 5C 24 ?? 57 48 83 EC 30 48 8D 0D ?? ?? ?? ?? E8 ?? ?? ?? ?? 33 FF 8B DF 66 0F 1F 44 ?? 00 8B CB E8 ?? ?? ?? ?? FF C3 83 FB 19 7C ?? BA 02 00 00 00", "BeforeRenderRectangle", address =>
         {
@@ -181,7 +196,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
 
     }
 
-    private void SetupOverrideStructs()
+    private void SetupOverrides()
     {
         _orangeStripeOverride->XPos = _configuration.OrangeStripe.XPos;
         _orangeStripeOverride->GradientMain = _configuration.OrangeStripe.GradientMain.Struct;
@@ -197,6 +212,8 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         _mainBoxOverride->Height = _configuration.MainBox.Height;
         _mainBoxOverride->Length = _configuration.MainBox.Length;
 
+        *_textX = _configuration.TextXPos;
+        *_textY = _configuration.TexYXPos;
     }
 
     private void RenderMessageBox()
@@ -262,7 +279,7 @@ public unsafe class Mod : ModBase // <= Do not Remove.
         _configuration = configuration;
         _logger.WriteLine($"[{_modConfig.ModId}] Config Updated: Applying");
 
-        SetupOverrideStructs();
+        SetupOverrides();
     }
     #endregion
 
