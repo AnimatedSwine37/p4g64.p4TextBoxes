@@ -19,8 +19,8 @@ public class MainBoxConfig
 
     [DisplayName("X Position")]
     [Description("Changes the horizontal position of the main brown box.")]
-    [DefaultValue(45)]
-    public int XPos { get; set; } = 45;
+    [DefaultValue(47)]
+    public int XPos { get; set; } = 47;
 
     [DisplayName("Y Position")]
     [Description("Changes the vertical position of the main brown box.")]

@@ -23,13 +23,13 @@ public class OrangeStripeConfig
 
     [DisplayName("Y Position")]
     [Description("Changes the vertical position of the orange stripe behind the main box.")]
-    [DefaultValue(411)]
-    public int YPos { get; set; } = 411;
+    [DefaultValue(408)]
+    public int YPos { get; set; } = 408;
 
     [DisplayName("Height")]
     [Description("Changes how tall the orange stripe behind the main box is.")]
-    [DefaultValue(126)]
-    public int Height { get; set; } = 126;
+    [DefaultValue(128)]
+    public int Height { get; set; } = 128;
 
     [DisplayName("Length")]
     [Description("Changes how long the orange stripe behind the main box is.")]
