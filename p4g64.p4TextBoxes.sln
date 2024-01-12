@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.8.34330.188
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "p4g64.p4TextBoxes", "p4g64.p4TextBoxes\p4g64.p4TextBoxes.csproj", "{5E794FD9-A2C9-411C-B975-B27F08B670E7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{5E794FD9-A2C9-411C-B975-B27F08B670E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5E794FD9-A2C9-411C-B975-B27F08B670E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5E794FD9-A2C9-411C-B975-B27F08B670E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5E794FD9-A2C9-411C-B975-B27F08B670E7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {BFEE3BDD-4D95-4114-8D7C-814A6BACC07A}
+	EndGlobalSection
+EndGlobal

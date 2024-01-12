@@ -1,0 +1,24 @@
+{
+  "ModId": "p4g64.p4TextBoxes",
+  "ModName": "P4 Style Text Boxes",
+  "ModAuthor": "AnimatedSwine37",
+  "ModVersion": "1.0.0",
+  "ModDescription": "Makes the text boxes look like they did in the original Persona 4",
+  "ModDll": "p4g64.p4TextBoxes.dll",
+  "ModIcon": "Preview.png",
+  "ModR2RManagedDll32": "x86/p4g64.p4TextBoxes.dll",
+  "ModR2RManagedDll64": "x64/p4g64.p4TextBoxes.dll",
+  "ModNativeDll32": "",
+  "ModNativeDll64": "",
+  "IsLibrary": false,
+  "ReleaseMetadataFileName": "p4g64.p4TextBoxes.ReleaseMetadata.json",
+  "PluginData": {},
+  "IsUniversalMod": false,
+  "ModDependencies": [
+    "reloaded.sharedlib.hooks",
+    "Reloaded.Memory.SigScan.ReloadedII"
+  ],
+  "OptionalDependencies": [],
+  "SupportedAppId": ["p4g.exe"],
+  "ProjectUrl": ""
+}
