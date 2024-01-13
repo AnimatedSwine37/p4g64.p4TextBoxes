@@ -162,7 +162,7 @@ param (
     $UseScriptDirectory=$True,
 
     ## => User Config <= ## 
-    $ProjectPath = "p4g64.p4TextBoxes.csproj",
+    $ProjectPath = "p4g64.p4TextBoxes/p4g64.p4TextBoxes.csproj",
     $PackageName = "p4g64.p4TextBoxes",
     $PublishOutputDir = "Publish/ToUpload",
 
